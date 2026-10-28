@@ -475,7 +475,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 410px;
+      min-height: 430px;
       transition: border-color 0.35s ease;
     }
 
@@ -544,7 +544,7 @@
       flex-direction: column;
       justify-content: center;
       position: relative;
-      min-height: 255px;
+      min-height: 270px;
       padding: 6px 2px;
     }
 
@@ -666,7 +666,7 @@
     .full-letter-review {
       display: none;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       margin-top: 14px;
       padding-top: 14px;
       border-top: 1px dashed rgba(216, 59, 108, 0.28);
@@ -691,10 +691,23 @@
     }
 
     .review-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       padding: 10px 14px;
-      border-radius: 12px;
-      background: rgba(255, 238, 244, 0.75);
-      border: 1px solid rgba(229, 132, 164, 0.22);
+      border-radius: 14px;
+      background: rgba(255, 238, 244, 0.78);
+      border: 1px solid rgba(229, 132, 164, 0.25);
+    }
+
+    .review-item-gif {
+      width: 58px;
+      height: 58px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid rgba(216, 59, 108, 0.25);
+      background: #fff3f7;
     }
 
     .toggle-review-btn {
@@ -881,7 +894,7 @@
       }
 
       .love-letter-card {
-        min-height: 360px;
+        min-height: 380px;
         padding: 22px 18px;
       }
 
@@ -1156,7 +1169,7 @@
               <span id="lockedTextSpan"></span><span class="decode-char" id="decodeCharSpan"></span>
             </p>
 
-            <!-- Khung hiển thị ảnh GIF tương ứng với câu -->
+            <!-- Khung hiển thị ảnh GIF tương ứng với từng câu (Đủ cả 7 GIF) -->
             <div class="gif-stage-box" id="gifStageBox">
               <div class="gif-inner-frame">
                 <img
@@ -1173,14 +1186,14 @@
             </div>
           </div>
 
-          <!-- Nút và danh sách xem lại toàn bộ lời tỏ tình sau khi câu cuối xuất hiện -->
+          <!-- Nút và danh sách xem lại toàn bộ 7 câu tỏ tình + 7 GIF sau khi câu cuối xuất hiện -->
           <button type="button" class="toggle-review-btn" id="toggleReviewBtn">
             <span>Xem lại toàn bộ lời Thịnh nhắn từ đầu</span>
           </button>
           <div class="full-letter-review" id="fullLetterReview"></div>
         </div>
 
-        <!-- Chân thư: Tiến trình 6 đoạn & đường nét trái tim nhỏ -->
+        <!-- Chân thư: Tiến trình 7 câu tương ứng 7 GIF & đường nét trái tim nhỏ -->
         <footer class="letter-footer">
           <div class="progress-dots" id="progressDots" aria-label="Tiến trình câu chuyện">
             <span class="progress-dot" data-step="0"></span>
@@ -1189,6 +1202,7 @@
             <span class="progress-dot" data-step="3"></span>
             <span class="progress-dot" data-step="4"></span>
             <span class="progress-dot" data-step="5"></span>
+            <span class="progress-dot" data-step="6"></span>
           </div>
 
           <svg class="flourish-svg" viewBox="0 0 200 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -1229,7 +1243,7 @@
   </main>
 
   <!-- ========================================================================
-       JAVASCRIPT ĐIỀU KHIỂN HIỆU ỨNG TỎ TÌNH, MÈO HỒNG & NÚT LỰA CHỌN
+       JAVASCRIPT ĐIỀU KHIỂN HIỆU ỨNG TỎ TÌNH, MÈO HỒNG, 7 GIF & NÚT LỰA CHỌN
        ======================================================================== -->
   <script>
     (function () {
@@ -1240,7 +1254,7 @@
          ---------------------------------------------------------------------- */
       const CONFIG = {
         charTypeSpeedMs: 30,        // Tốc độ gõ từng ký tự thư tỏ tình (ms)
-        sentenceReadHoldMs: 4200,   // Thời gian giữ câu trên màn hình để Thoa đọc
+        sentenceReadHoldMs: 4100,   // Thời gian giữ câu trên màn hình để Thoa đọc
         sentenceFadeInMs: 500,      // Thời gian fade-in câu mới
         sentenceFadeOutMs: 500,     // Thời gian fade-out câu cũ trước khi câu mới xuất hiện
         betweenSentenceGapMs: 240,  // Khoảng nghỉ ngắn sau khi câu cũ biến mất hoàn toàn
@@ -1253,47 +1267,61 @@
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       /* ----------------------------------------------------------------------
-         2. NỘI DUNG TỎ TÌNH DÀNH CHO THOA
+         2. NỘI DUNG 7 CÂU TỎ TÌNH ĐI KÈM ĐẦY ĐỦ 7 ẢNH GIF (KHÔNG BỎ SÓT ẢNH NÀO)
          ---------------------------------------------------------------------- */
       const STORY_SENTENCES = [
         {
-          text: "Thoa biết hong, ban đầu Thịnh chỉ nghĩ là muốn nói chuyện với Thoa nhiều hơn một chút thôi. Nhưng rồi chẳng biết từ lúc nào, Thịnh lại bắt đầu mong tin nhắn của Thoa, muốn kể Thoa nghe mấy chuyện nhỏ xíu trong ngày, rồi cũng muốn biết hôm nay Thoa vui hay buồn.",
-          gifUrl: "https://i.pinimg.com/originals/56/80/90/5680904ede54bea21d02450affebfc4f.gif",
-          gifFallback: "Mong tin nhắn của Thoa mỗi ngày 💗",
+          // GIF 1
+          text: "Thoa biết hong, ban đầu Thịnh chỉ nghĩ là muốn nói chuyện với Thoa nhiều hơn một chút thôi.",
+          gifUrl: "https://i.pinimg.com/originals/b6/b1/d6/b6b1d64609f266d8f236752d8551f26f.gif",
+          gifFallback: "Ban đầu chỉ muốn nói chuyện với Thoa nhiều hơn một chút thôi 💗",
           aiVisitLetter: false,
           aiBadge: "Thoa biết hong 💗"
         },
         {
+          // GIF 2
+          text: "Nhưng rồi chẳng biết từ lúc nào, Thịnh lại bắt đầu mong tin nhắn của Thoa, muốn kể Thoa nghe mấy chuyện nhỏ xíu trong ngày, rồi cũng muốn biết hôm nay Thoa vui hay buồn.",
+          gifUrl: "https://i.pinimg.com/originals/3f/4e/d3/3f4ed3cb1539cb42dc93b78020a3ef55.gif",
+          gifFallback: "Mong tin nhắn của Thoa mỗi ngày 💗",
+          aiVisitLetter: true,
+          aiBadge: "Mong tin nhắn Thoa ^^"
+        },
+        {
+          // GIF 3
           text: "Thịnh không biết sau này tụi mình sẽ như thế nào, nhưng Thịnh biết là hiện tại, Thịnh thật sự có tình cảm với Thoa.",
           gifUrl: "https://i.pinimg.com/originals/b7/c6/4a/b7c64aca651271c52087f58276bd1de1.gif",
           gifFallback: "Thịnh thật sự có tình cảm với Thoa 🌷",
-          aiVisitLetter: true,
+          aiVisitLetter: false,
           aiBadge: "Thật lòng đó 🌷"
         },
         {
+          // GIF 4
           text: "Thịnh thích Thoa, không phải vì Thịnh muốn Thoa phải đáp lại ngay, mà vì mỗi lần nói chuyện với Thoa, Thịnh đều cảm thấy Thoa là một người rất đặc biệt.",
-          gifUrl: null,
-          gifFallback: "",
-          aiVisitLetter: false,
+          gifUrl: "https://i.pinimg.com/originals/7e/f6/9c/7ef69cd0a6b0b78526c8ce983b3296fc.gif",
+          gifFallback: "Thoa là một người rất đặc biệt 💗",
+          aiVisitLetter: true,
           aiBadge: "Người đặc biệt 💗"
         },
         {
+          // GIF 5
           text: "Thịnh biết Thoa vẫn cần thời gian để hiểu rõ cảm xúc của mình. Thịnh tôn trọng điều đó, nên Thoa không cần phải trả lời ngay đâu nha.",
-          gifUrl: "https://i.pinimg.com/originals/3f/4e/d3/3f4ed3cb1539cb42dc93b78020a3ef55.gif",
+          gifUrl: "https://i.pinimg.com/originals/4e/89/d3/4e89d3e4ec4b1f59b1664e880a875c65.gif",
           gifFallback: "Thịnh luôn tôn trọng cảm xúc của Thoa ^^",
-          aiVisitLetter: true,
+          aiVisitLetter: false,
           aiBadge: "Hong vội đâu nha ^^"
         },
         {
+          // GIF 6
           text: "Thịnh chỉ muốn thành thật với lòng mình một lần, để Thoa biết rằng có một người đang nghiêm túc muốn tìm hiểu Thoa, bằng sự chân thành chứ không phải những lời hứa thật lớn lao.",
-          gifUrl: null,
-          gifFallback: "",
-          aiVisitLetter: false,
+          gifUrl: "https://i.pinimg.com/originals/fd/60/15/fd6015dd3f31d0223374f993f66e85d3.gif",
+          gifFallback: "Bằng sự chân thành dành cho Thoa 🥹",
+          aiVisitLetter: true,
           aiBadge: "Bằng sự chân thành 🥹"
         },
         {
+          // GIF 7
           text: "Thoa ơi, Thịnh thích Thoa thật lòng đó. 💗",
-          gifUrl: "https://i.pinimg.com/originals/4e/89/d3/4e89d3e4ec4b1f59b1664e880a875c65.gif",
+          gifUrl: "https://i.pinimg.com/originals/56/80/90/5680904ede54bea21d02450affebfc4f.gif",
           gifFallback: "Thoa ơi, Thịnh thích Thoa thật lòng đó 💗",
           isClimax: true,
           aiVisitLetter: true,
@@ -1427,6 +1455,7 @@
         return trimmed.charAt(0).toLocaleUpperCase('vi-VN') + trimmed.slice(1);
       }
 
+      // Tải trước cả 7 ảnh GIF để chuyển cảnh mượt mà tức thì
       STORY_SENTENCES.forEach((item) => {
         if (item.gifUrl) {
           const preloadImg = new Image();
@@ -1954,12 +1983,25 @@
         startMascotAmbientBehavior();
       }
 
+      // Hiển thị lại toàn bộ 7 câu tỏ tình kèm cả 7 ảnh GIF khi Thoa bấm xem lại
       function buildFullLetterReviewList() {
         fullLetterReview.innerHTML = '';
         STORY_SENTENCES.forEach((item, index) => {
           const div = document.createElement('div');
           div.className = 'review-item';
-          div.textContent = `${index + 1}. ${capitalizeVietnameseSentence(item.text)}`;
+
+          if (item.gifUrl) {
+            const img = document.createElement('img');
+            img.className = 'review-item-gif';
+            img.src = item.gifUrl;
+            img.alt = `GIF ${index + 1}`;
+            div.appendChild(img);
+          }
+
+          const textSpan = document.createElement('span');
+          textSpan.textContent = `${index + 1}. ${capitalizeVietnameseSentence(item.text)}`;
+          div.appendChild(textSpan);
+
           fullLetterReview.appendChild(div);
         });
       }
